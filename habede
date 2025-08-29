@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Feliz cumpleaños 🎉</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--accent:#ff6b6b}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0b1220 0%,#071328 60%,#021226 100%);font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#f8fafc;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .card{width:min(960px,96vw);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:18px;padding:32px;box-shadow:0 8px 30px rgba(2,6,23,0.6);position:relative;overflow:hidden}
+    header{display:flex;gap:16px;align-items:center}
+    .cake{font-size:48px;animation:bounce 2s infinite}
+    h1{font-size:clamp(28px,6vw,48px);margin:0 0 6px 0;letter-spacing:0.6px}
+    p.lead{margin:0 0 18px 0;opacity:0.85}
+    .name{color:var(--accent);font-weight:700}
+    .big-hero{display:flex;gap:24px;align-items:center}
+    .balloons{position:relative;width:220px;height:220px}
+    .balloon{position:absolute;border-radius:50%;width:84px;height:108px;transform-origin:center bottom;animation:float 6s ease-in-out infinite}
+    .balloon::after{content:'';position:absolute;left:50%;bottom:-12px;width:2px;height:24px;background:rgba(255,255,255,0.12);transform:translateX(-50%)}
+    .b1{left:10px;top:20px;background:linear-gradient(180deg,#ffb6b9,#ff6b6b);animation-delay:0s}
+    .b2{left:80px;top:10px;background:linear-gradient(180deg,#ffd6a5,#ffd166);animation-delay:0.6s}
+    .b3{left:140px;top:40px;background:linear-gradient(180deg,#9be7ff,#66d9ff);animation-delay:1.2s}
+    @keyframes float{0%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-16px) rotate(4deg)}100%{transform:translateY(0) rotate(-2deg)}}
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .footer{display:flex;justify-content:flex-end;align-items:center;margin-top:18px;gap:12px}
+    .message{margin-top:16px;font-size:18px;line-height:1.3}
+    canvas#confetti{pointer-events:none;position:absolute;inset:0;width:100%;height:100%}
+    .credits{font-size:12px;opacity:0.6}
+    @media(max-width:640px){.big-hero{flex-direction:column;align-items:flex-start}.balloons{width:160px;height:160px}}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <canvas id="confetti"></canvas>
+    <div class="big-hero">
+      <div style="flex:1">
+        <header>
+          <div class="cake">🎂</div>
+          <div>
+            <h1 id="title">Selamat Ulang Tahun, <span id="name" class="name">Agnes Eillina Ayu Cahyaningrum</span>!</h1>
+            <p class="lead">Sebuah ucapan kecil untuk hari istimewa 🎊</p>
+          </div>
+        </header>
+        <div class="message" id="message">Semoga hari-harimu selalu penuh kebahagiaan, tawa, dan kejutan manis. 🎈</div>
+
+        <div class="footer">
+        </div>
+      </div>
+
+      <div class="balloons" aria-hidden="true">
+        <div class="balloon b1"></div>
+        <div class="balloon b2"></div>
+        <div class="balloon b3"></div>
+      </div>
+    </div>
+    <audio id="music" autoplay loop>
+      <source src="https://open.spotify.com/track/0uROb6x5IunKokDggpmwKz?si=59365f284f954c0d" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    function popConfetti(count){
+      const c=document.getElementById('confetti');
+      c.width=c.clientWidth*c.devicePixelRatio; c.height=c.clientHeight*c.devicePixelRatio;
+      const ctx=c.getContext('2d'); ctx.scale(c.devicePixelRatio,c.devicePixelRatio);
+      const pieces=[];
+      const colors=['#ff6b6b','#ffd166','#9be7ff','#c7f9cc','#b388ff'];
+      for(let i=0;i<count;i++){
+        pieces.push({
+          x: Math.random()*c.clientWidth,
+          y: Math.random()*c.clientHeight*0.2 + 20,
+          w: 6 + Math.random()*8,
+          h: 8 + Math.random()*8,
+          vx: -4 + Math.random()*8,
+          vy: 2 + Math.random()*6,
+          rot: Math.random()*360,
+          vr: -6 + Math.random()*12,
+          color: colors[Math.floor(Math.random()*colors.length)],
+          life: 80 + Math.floor(Math.random()*80)
+        });
+      }
+      let frame=0;
+      const id=setInterval(()=>{
+        frame++; ctx.clearRect(0,0,c.clientWidth,c.clientHeight);
+        for(let p of pieces){
+          p.x+=p.vx; p.y+=p.vy; p.vy+=0.15; p.rot+=p.vr; p.life--;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+          ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+          ctx.restore();
+        }
+        if(frame>220){ clearInterval(id); ctx.clearRect(0,0,c.clientWidth,c.clientHeight); }
+      },1000/60);
+    }
+
+    // burst confetti otomatis saat load
+    setTimeout(()=>popConfetti(120),700);
+  </script>
+</body>
+</html>
